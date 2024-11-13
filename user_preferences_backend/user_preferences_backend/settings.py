@@ -79,15 +79,18 @@ WSGI_APPLICATION = 'user_preferences_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'user_preferences_db',
-        'ENFORCE_SCHEMA': False,  # Set to False as MongoDB is schema-less
-        'CLIENT': {
-            'host': 'mongodb+srv://testmongodbuser:yonpjdHlsXDw9nlY@cluster0.ikcnx.mongodb.net/user_preferences_db?retryWrites=true&w=majority',
-            'retryWrites': True,
+        'USER': 'damiboytest1234',
+        'PASSWORD': 'pwd_Damiboytest1234',
+        'HOST': 'localhost',  # Use '127.0.0.1' if localhost fails
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
 }
+
 
 
 
@@ -130,4 +133,4 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
