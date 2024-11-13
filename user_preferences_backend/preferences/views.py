@@ -6,9 +6,16 @@ from .serializers import AccountSettingsSerializer, NotificationSettingsSerializ
 
 class AccountSettingsView(APIView):
     def get(self, request):
-        settings = AccountSettings.objects.get(user=request.user)
-        serializer = AccountSettingsSerializer(settings)
-        return Response(serializer.data)
+        try:
+            # settings = AccountSettings.objects.get(username=request.user.username)
+            # serializer = AccountSettingsSerializer(settings)
+            # return Response(serializer.data, status=status.HTTP_200_OK)
+            # get all users
+            settings = AccountSettings.objects.all()
+            serializer = AccountSettingsSerializer(settings, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except AccountSettings.DoesNotExist:
+            return Response({"error": "Account settings not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         serializer = AccountSettingsSerializer(data=request.data)
