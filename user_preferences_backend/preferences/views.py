@@ -8,7 +8,7 @@ from .serializers import (
     ThemeSettingsSerializer,
     PrivacySettingsSerializer
 )
-from .auth import authenticate
+from .auth import authenticate, get_user_from_token
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class LoginView(APIView):
@@ -26,12 +26,14 @@ class LoginView(APIView):
 
 class PreferencesView(APIView):
     def get(self, request):
-        user = request.user
+        token = request.headers.get('Authorization').split(' ')[1]
+        user = get_user_from_token(token)
+        print (user)
         try:
-            account_settings = AccountSettings.objects.get(user=user)
-            notification_settings = NotificationSettings.objects.get(user=user)
-            theme_settings = ThemeSettings.objects.get(user=user)
-            privacy_settings = PrivacySettings.objects.get(user=user)
+            account_settings = AccountSettings.objects.get(id=user.id)
+            notification_settings = NotificationSettings.objects.get(user_id=user.id)
+            theme_settings = ThemeSettings.objects.get(user_id=user.id)
+            privacy_settings = PrivacySettings.objects.get(user_id=user.id)
             
             data = {
                 'account_settings': AccountSettingsSerializer(account_settings).data,

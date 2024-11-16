@@ -22,7 +22,7 @@ export default function LoginPage() {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.token);
+      sessionStorage.setItem("token", data.token);
       window.location.href = "/preferences";
     } catch (error) {
       if (error instanceof Error) {
