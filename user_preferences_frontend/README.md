@@ -17,17 +17,19 @@ npm run dev
 
 3. Open your browser and navigate to `http://localhost:3000`.
 
+
+
 ### Register Page
-![Register Page](../assert/register.png)
+<img src="../assert/register.png" alt="Register Page" width="180" height="400">
 
 ### Login Page
-![Login Page](../assert/login.png)
+<img src="../assert/login.png" alt="Login Page" width="180" height="400">
 
 ### Preferences Page
-![Preferences Page](../assert/preferences.png)
+<img src="../assert/preferences.png" alt="Preferences Page" width="180" height="400">
 
 ### Dark Mode
-![Dark Mode](../assert/dark_mode.png)
+<img src="../assert/dark_mode.png" alt="Dark Mode" width="180" height="400">
 
 ### Network Tab
-![Network Tab](../assert/apis.png)
+<img src="../assert/apis.png" alt="Network Tab" width="600" height="400">

@@ -19,6 +19,8 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
+5. Check available APIs using swagger:
+> http://localhost:8000/docs/
 
 ## Architecture
 
