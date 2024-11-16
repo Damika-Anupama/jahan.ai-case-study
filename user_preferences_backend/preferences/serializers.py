@@ -16,42 +16,57 @@ class AccountSettingsSerializer(serializers.ModelSerializer):
         return value
 
 class NotificationSettingsSerializer(serializers.ModelSerializer):
-    frequency = serializers.ChoiceField(choices=["daily", "weekly"])
+    DAILY = 'daily'
+    WEEKLY = 'weekly'
+    MONTHLY = 'monthly'
+    ON_DEMAND = 'on-demand'
+    FREQUENCY_CHOICES = [
+        (DAILY, 'Daily'),
+        (WEEKLY, 'Weekly'),
+        (MONTHLY, 'Monthly'),
+        (ON_DEMAND, 'On-demand'),
+    ]
+
+    frequency = serializers.ChoiceField(choices=[choice[0] for choice in FREQUENCY_CHOICES])
 
     class Meta:
         model = NotificationSettings
         fields = '__all__'
-    
-    def validate_frequency(self, value):
-        if value not in ["daily", "weekly"]:
-            raise serializers.ValidationError("Frequency must be either 'daily' or 'weekly'.")
-        return value
 
 class ThemeSettingsSerializer(serializers.ModelSerializer):
-    color = serializers.CharField(max_length=50)
-    font = serializers.CharField(max_length=50)
-    layout = serializers.CharField(max_length=50)
+    LIGHT = 'light'
+    DARK = 'dark'
+    THEME_CHOICES = [
+        (LIGHT, 'Light'),
+        (DARK, 'Dark'),
+    ]
+
+    SMALL = 'small'
+    MEDIUM = 'medium'
+    LARGE = 'large'
+    FONT_SIZE_CHOICES = [
+        (SMALL, 'Small'),
+        (MEDIUM, 'Medium'),
+        (LARGE, 'Large'),
+    ]
+
+    theme = serializers.ChoiceField(choices=[choice[0] for choice in THEME_CHOICES])
+    font_size = serializers.ChoiceField(choices=[choice[0] for choice in FONT_SIZE_CHOICES])
 
     class Meta:
         model = ThemeSettings
         fields = '__all__'
-    
-    def validate_color(self, value):
-        if not value.isalnum():
-            raise serializers.ValidationError("Color must contain only alphanumeric characters.")
-        return value
 
-    def validate_font(self, value):
-        if not value.isalnum():
-            raise serializers.ValidationError("Font must contain only alphanumeric characters.")
-        return value
-
-    def validate_layout(self, value):
-        if not value.isalnum():
-            raise serializers.ValidationError("Layout must contain only alphanumeric characters.")
-        return value
-    
 class PrivacySettingsSerializer(serializers.ModelSerializer):
+    PUBLIC = 'public'
+    PRIVATE = 'private'
+    PROFILE_VISIBILITY_CHOICES = [
+        (PUBLIC, 'Public'),
+        (PRIVATE, 'Private'),
+    ]
+
+    profile_visibility = serializers.ChoiceField(choices=[choice[0] for choice in PROFILE_VISIBILITY_CHOICES])
+
     class Meta:
         model = PrivacySettings
         fields = '__all__'
