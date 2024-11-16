@@ -28,7 +28,6 @@ class PreferencesView(APIView):
     def get(self, request):
         token = request.headers.get('Authorization').split(' ')[1]
         user = get_user_from_token(token)
-        print (user)
         try:
             account_settings = AccountSettings.objects.get(id=user.id)
             notification_settings = NotificationSettings.objects.get(user_id=user.id)
@@ -46,21 +45,22 @@ class PreferencesView(APIView):
             return Response({"error": "Preferences not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class UpdatePreferencesView(APIView):
-    def put(self, request, section):
-        user = request.user
+    def patch(self, request, section):
+        token = request.headers.get('Authorization').split(' ')[1]
+        user = get_user_from_token(token)
         data = request.data
         
-        if section == 'account':
-            instance = AccountSettings.objects.get(user=user)
+        if section == 'account_settings':
+            instance = AccountSettings.objects.get(id=user.id)
             serializer = AccountSettingsSerializer(instance, data=data, partial=True)
-        elif section == 'notifications':
-            instance = NotificationSettings.objects.get(user=user)
+        elif section == 'notification_settings':
+            instance = NotificationSettings.objects.get(user_id=user.id)
             serializer = NotificationSettingsSerializer(instance, data=data, partial=True)
-        elif section == 'theme':
-            instance = ThemeSettings.objects.get(user=user)
+        elif section == 'theme_settings':
+            instance = ThemeSettings.objects.get(user_id=user.id)
             serializer = ThemeSettingsSerializer(instance, data=data, partial=True)
-        elif section == 'privacy':
-            instance = PrivacySettings.objects.get(user=user)
+        elif section == 'privacy_settings':
+            instance = PrivacySettings.objects.get(user_id=user.id)
             serializer = PrivacySettingsSerializer(instance, data=data, partial=True)
         else:
             return Response({'detail': 'Invalid section'}, status=status.HTTP_400_BAD_REQUEST)

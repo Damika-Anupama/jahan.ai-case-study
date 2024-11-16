@@ -44,7 +44,10 @@ export default function Preferences() {
     useEffect(() => {
         const storedPreferences = sessionStorage.getItem("preferences");
         if (storedPreferences && storedPreferences !== '{"detail":"Invalid token"}') {
-            setPreferences(JSON.parse(storedPreferences));
+            const parsedPreferences = JSON.parse(storedPreferences);
+            setPreferences(parsedPreferences);
+            setTheme(parsedPreferences.theme_settings.theme);
+            setFontSize(parsedPreferences.theme_settings.font_size);
         }
         else {
             const fetchPreferences = async () => {
@@ -130,9 +133,11 @@ export default function Preferences() {
                             id="username"
                             type="text"
                             defaultValue={preferences.account_settings.username}
-                            onBlur={(e) =>
-                                handleUpdate("account_settings", { username: e.target.value })
-                            }
+                            onBlur={(e) => {
+                                if (e.target.value !== preferences.account_settings.username) {
+                                    handleUpdate("account_settings", { username: e.target.value });
+                                }
+                            }}
                             className={`w-full px-3 py-2 mb-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                         />
                         <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`} htmlFor="email">
@@ -141,9 +146,6 @@ export default function Preferences() {
                         <input
                             type="email"
                             defaultValue={preferences.account_settings.email}
-                            onBlur={(e) =>
-                                handleUpdate("account_settings", { email: e.target.value })
-                            }
                             disabled
                             className={`cursor-not-allowed w-full px-3 py-2 mb-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                         />
@@ -178,11 +180,13 @@ export default function Preferences() {
                             <input
                                 type="checkbox"
                                 defaultChecked={preferences.notification_settings.email_notifications}
-                                onChange={(e) =>
-                                    handleUpdate("notification_settings", {
-                                        email_notifications: e.target.checked,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    if (e.target.checked !== preferences.notification_settings.email_notifications) {
+                                        handleUpdate("notification_settings", {
+                                            email_notifications: e.target.checked,
+                                        });
+                                    }
+                                }}
                                 className="h-4 w-4 text-blue-600 dark:text-blue-400"
                             />
                             <span>Email Notifications</span>
@@ -191,11 +195,13 @@ export default function Preferences() {
                             <input
                                 type="checkbox"
                                 defaultChecked={preferences.notification_settings.push_notifications}
-                                onChange={(e) =>
-                                    handleUpdate("notification_settings", {
-                                        push_notifications: e.target.checked,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    if (e.target.checked !== preferences.notification_settings.push_notifications) {
+                                        handleUpdate("notification_settings", {
+                                            push_notifications: e.target.checked,
+                                        })
+                                    }
+                                }}
                                 className="h-4 w-4 text-blue-600 dark:text-blue-400"
                             />
                             <span>Push Notifications</span>
@@ -204,9 +210,11 @@ export default function Preferences() {
                             Frequency:
                             <select
                                 value={preferences.notification_settings.frequency}
-                                onChange={(e) =>
-                                    handleUpdate("notification_settings", { frequency: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    if (e.target.value !== preferences.notification_settings.frequency) {
+                                        handleUpdate("notification_settings", { frequency: e.target.value })
+                                    }
+                                }}
                                 className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
                                 <option value="daily">Daily</option>
@@ -226,7 +234,9 @@ export default function Preferences() {
                                 value={theme}
                                 onChange={(e) => {
                                     setTheme(e.target.value);
-                                    handleUpdate("theme_settings", { theme: e.target.value });
+                                    if (e.target.value !== preferences.theme_settings.theme) {
+                                        handleUpdate("theme_settings", { theme: e.target.value });
+                                    }
                                 }}
                                 className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
@@ -240,7 +250,9 @@ export default function Preferences() {
                                 value={fontSize}
                                 onChange={(e) => {
                                     setFontSize(e.target.value);
-                                    handleUpdate("theme_settings", { font_size: e.target.value });
+                                    if (e.target.value !== preferences.theme_settings.font_size) {
+                                        handleUpdate("theme_settings", { font_size: e.target.value });
+                                    }
                                 }}
                                 className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
@@ -258,11 +270,13 @@ export default function Preferences() {
                             Profile Visibility:
                             <select
                                 defaultValue={preferences.privacy_settings.profile_visibility}
-                                onChange={(e) =>
-                                    handleUpdate("privacy_settings", {
-                                        profile_visibility: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    if (e.target.value !== preferences.privacy_settings.profile_visibility) {
+                                        handleUpdate("privacy_settings", {
+                                            profile_visibility: e.target.value,
+                                        })
+                                    }
+                                }}
                                 className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
                                 <option value="public">Public</option>
@@ -273,11 +287,13 @@ export default function Preferences() {
                             <input
                                 type="checkbox"
                                 defaultChecked={preferences.privacy_settings.data_sharing}
-                                onChange={(e) =>
-                                    handleUpdate("privacy_settings", {
-                                        data_sharing: e.target.checked,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    if (e.target.checked !== preferences.privacy_settings.data_sharing) {
+                                        handleUpdate("privacy_settings", {
+                                            data_sharing: e.target.checked,
+                                        })
+                                    }
+                                }}
                                 className="h-4 w-4 text-blue-600 dark:text-blue-400"
                             />
                             <span>Data Sharing</span>
