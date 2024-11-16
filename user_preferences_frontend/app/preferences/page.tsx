@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { set } from "react-hook-form";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 interface Preferences {
     account_settings: {
@@ -38,6 +39,7 @@ export default function Preferences() {
     const [preferences, setPreferences] = useState<Preferences | null>(null);
     const [theme, setTheme] = useState("light");
     const [fontSize, setFontSize] = useState("medium");
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         const storedPreferences = sessionStorage.getItem("preferences");
@@ -92,7 +94,7 @@ export default function Preferences() {
     const handleLogout = () => {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("preferences");
-        router.push("http://localhost:3000/");
+        router.push(`${process.env.NEXT_PUBLIC_FRONTEND_URL}`);
     };
 
     if (!preferences)
@@ -142,19 +144,31 @@ export default function Preferences() {
                             onBlur={(e) =>
                                 handleUpdate("account_settings", { email: e.target.value })
                             }
-                            className={`w-full px-3 py-2 mb-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
+                            disabled
+                            className={`cursor-not-allowed w-full px-3 py-2 mb-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                         />
-                        <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`} htmlFor="password">
+                        <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`} htmlFor="email">
                             Password
                         </label>
-                        <input
-                            type="password"
-                            defaultValue={preferences.account_settings.password}
-                            onBlur={(e) =>
-                                handleUpdate("account_settings", { password: e.target.value })
-                            }
-                            className={`w-full px-3 py-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                defaultValue={preferences.account_settings.password}
+                                disabled
+                                className={`cursor-not-allowed w-full px-3 py-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"} ${fontSize === "small" ? "font-small" : fontSize === "medium" ? "font-medium" : "font-large"}`}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 px-3 flex items-center focus:outline-none"
+                            >
+                                {showPassword ? (
+                                    <AiFillEyeInvisible className="h-5 w-5 text-gray-500" />
+                                ) : (
+                                    <AiFillEye className="h-5 w-5 text-gray-500" />
+                                )}
+                            </button>
+                        </div>
                     </section>
 
                     {/* Notification Settings */}
