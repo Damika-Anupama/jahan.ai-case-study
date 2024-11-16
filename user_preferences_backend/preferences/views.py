@@ -11,6 +11,7 @@ from .serializers import (
 )
 from .auth import authenticate, get_user_from_token
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.exceptions import ObjectDoesNotExist
 
 class RegisterView(APIView):
     @transaction.atomic
@@ -81,30 +82,41 @@ class PreferencesView(APIView):
             return Response(data, status=status.HTTP_200_OK)
         except (AccountSettings.DoesNotExist, NotificationSettings.DoesNotExist, ThemeSettings.DoesNotExist, PrivacySettings.DoesNotExist):
             return Response({"error": "Preferences not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UpdatePreferencesView(APIView):
+    @transaction.atomic
     def patch(self, request, section):
         token = request.headers.get('Authorization').split(' ')[1]
         user = get_user_from_token(token)
         data = request.data
         
-        if section == 'account_settings':
-            instance = AccountSettings.objects.get(id=user.id)
-            serializer = AccountSettingsSerializer(instance, data=data, partial=True)
-        elif section == 'notification_settings':
-            instance = NotificationSettings.objects.get(user_id=user.id)
-            serializer = NotificationSettingsSerializer(instance, data=data, partial=True)
-        elif section == 'theme_settings':
-            instance = ThemeSettings.objects.get(user_id=user.id)
-            serializer = ThemeSettingsSerializer(instance, data=data, partial=True)
-        elif section == 'privacy_settings':
-            instance = PrivacySettings.objects.get(user_id=user.id)
-            serializer = PrivacySettingsSerializer(instance, data=data, partial=True)
-        else:
-            return Response({'detail': 'Invalid section'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if section == 'account_settings':
+                instance = AccountSettings.objects.get(id=user.id)
+                serializer = AccountSettingsSerializer(instance, data=data, partial=True)
+            elif section == 'notification_settings':
+                instance = NotificationSettings.objects.get(user_id=user.id)
+                serializer = NotificationSettingsSerializer(instance, data=data, partial=True)
+            elif section == 'theme_settings':
+                instance = ThemeSettings.objects.get(user_id=user.id)
+                serializer = ThemeSettingsSerializer(instance, data=data, partial=True)
+            elif section == 'privacy_settings':
+                instance = PrivacySettings.objects.get(user_id=user.id)
+                serializer = PrivacySettingsSerializer(instance, data=data, partial=True)
+            else:
+                return Response({'detail': 'Invalid section'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ObjectDoesNotExist:
+            transaction.set_rollback(True)
+            return Response({"error": f"{section.replace('_', ' ').title()} not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            transaction.set_rollback(True)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
