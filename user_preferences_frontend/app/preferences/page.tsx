@@ -107,7 +107,7 @@ export default function Preferences() {
             className={`min-h-screen flex items-center justify-center p-6 ${theme === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
                 }`}
         >
-            <div className="w-full max-w-lg bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+            <div className={`w-full max-w-lg p-6 rounded-lg shadow-lg ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}>
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold">Preferences</h1>
                     <button
@@ -121,7 +121,7 @@ export default function Preferences() {
                     {/* Account Settings */}
                     <section>
                         <h2 className="text-lg font-semibold">Account Settings</h2>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mt-2" htmlFor="username">
+                        <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"} mt-2`} htmlFor="username">
                             Username
                         </label>
                         <input
@@ -131,9 +131,9 @@ export default function Preferences() {
                             onBlur={(e) =>
                                 handleUpdate("account_settings", { username: e.target.value })
                             }
-                            className="w-full px-3 py-2 mb-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                            className={`w-full px-3 py-2 mb-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                         />
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200" htmlFor="email">
+                        <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`} htmlFor="email">
                             Email
                         </label>
                         <input
@@ -142,9 +142,9 @@ export default function Preferences() {
                             onBlur={(e) =>
                                 handleUpdate("account_settings", { email: e.target.value })
                             }
-                            className="w-full px-3 py-2 mb-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                            className={`w-full px-3 py-2 mb-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                         />
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200" htmlFor="password">
+                        <label className={`block text-sm font-medium ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`} htmlFor="password">
                             Password
                         </label>
                         <input
@@ -153,14 +153,14 @@ export default function Preferences() {
                             onBlur={(e) =>
                                 handleUpdate("account_settings", { password: e.target.value })
                             }
-                            className="w-full px-3 py-2 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                            className={`w-full px-3 py-2 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                         />
                     </section>
 
                     {/* Notification Settings */}
                     <section>
                         <h2 className="text-lg font-semibold">Notification Settings</h2>
-                        <label className="flex items-center space-x-2 mt-2">
+                        <label className={`flex items-center space-x-2 mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             <input
                                 type="checkbox"
                                 defaultChecked={preferences.notification_settings.email_notifications}
@@ -173,7 +173,7 @@ export default function Preferences() {
                             />
                             <span>Email Notifications</span>
                         </label>
-                        <label className="flex items-center space-x-2 mt-2">
+                        <label className={`flex items-center space-x-2 mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             <input
                                 type="checkbox"
                                 defaultChecked={preferences.notification_settings.push_notifications}
@@ -186,14 +186,14 @@ export default function Preferences() {
                             />
                             <span>Push Notifications</span>
                         </label>
-                        <label className="mt-2 block">
+                        <label className={`mt-2 block ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             Frequency:
                             <select
                                 value={preferences.notification_settings.frequency}
                                 onChange={(e) =>
                                     handleUpdate("notification_settings", { frequency: e.target.value })
                                 }
-                                className="w-full px-3 py-2 mt-1 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
                                 <option value="daily">Daily</option>
                                 <option value="weekly">Weekly</option>
@@ -206,7 +206,7 @@ export default function Preferences() {
                     {/* Theme Settings */}
                     <section>
                         <h2 className="text-lg font-semibold">Theme Settings</h2>
-                        <label className="block mt-2">
+                        <label className={`block mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             Theme:
                             <select
                                 value={theme}
@@ -214,13 +214,13 @@ export default function Preferences() {
                                     setTheme(e.target.value);
                                     handleUpdate("theme_settings", { theme: e.target.value });
                                 }}
-                                className="w-full px-3 py-2 mt-1 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
                                 <option value="light">Light</option>
                                 <option value="dark">Dark</option>
                             </select>
                         </label>
-                        <label className="block mt-2">
+                        <label className={`block mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             Font Size:
                             <select
                                 value={fontSize}
@@ -228,7 +228,7 @@ export default function Preferences() {
                                     setFontSize(e.target.value);
                                     handleUpdate("theme_settings", { font_size: e.target.value });
                                 }}
-                                className="w-full px-3 py-2 mt-1 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
                                 <option value="small">Small</option>
                                 <option value="medium">Medium</option>
@@ -240,7 +240,7 @@ export default function Preferences() {
                     {/* Privacy Settings */}
                     <section>
                         <h2 className="text-lg font-semibold">Privacy Settings</h2>
-                        <label className="block mt-2">
+                        <label className={`block mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             Profile Visibility:
                             <select
                                 defaultValue={preferences.privacy_settings.profile_visibility}
@@ -249,13 +249,13 @@ export default function Preferences() {
                                         profile_visibility: e.target.value,
                                     })
                                 }
-                                className="w-full px-3 py-2 mt-1 border rounded-md bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-200"
+                                className={`w-full px-3 py-2 mt-1 border rounded-md ${theme === "dark" ? "bg-gray-700 text-gray-200" : "bg-gray-100 text-gray-900"}`}
                             >
                                 <option value="public">Public</option>
                                 <option value="private">Private</option>
                             </select>
                         </label>
-                        <label className="flex items-center space-x-2 mt-2">
+                        <label className={`flex items-center space-x-2 mt-2 ${theme === "dark" ? "text-gray-200" : "text-gray-700"}`}>
                             <input
                                 type="checkbox"
                                 defaultChecked={preferences.privacy_settings.data_sharing}
