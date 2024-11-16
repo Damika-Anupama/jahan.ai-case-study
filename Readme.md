@@ -1,6 +1,5 @@
 ## Overview
-You are responsible for developing a user preferences page using the Webix
-framework (https://webix.com/) & Django framework (https://www.djangoproject.com/) for a web application. The user preferences page
+You are responsible for developing a user preferences page using the frontend framework & Django framework (https://www.djangoproject.com/) for a web application. The user preferences page
 will enable users to customize their settings according to their preferences. Your
 objective is to create an intuitive and user-friendly interface using modern web
 technologies.
@@ -47,3 +46,30 @@ compatibility, and maintain appropriate contrast ratios.
   - key features and call outs
   - how you would deploy
   - how you would test in a more robust way
+
+
+# User Preferences Management System
+
+The repository contains a full-stack application for user preferences management, divided into NextJS frontend and Django backend. This System allows users to register, log in, and manage account, notification, theme, and privacy settings, with support for dark mode for a seamless user experience.
+
+## Frontend
+
+The frontend is built with Next.js and Tailwind CSS. It includes pages for registration, login, and managing user preferences.
+
+For more details, see the [Frontend README](user_preferences_frontend/README.md).
+
+## Backend
+
+The backend is built with Django, Django REST framework and MySQL. It provides APIs for user registration, login, and managing user preferences. JWT authentication is used for secure access.
+
+For more details, see the [Backend README](user_preferences_backend/README.md).
+
+## Installation
+```sh
+git clone https://github.com/Damika-Anupama/jahan.ai-case-study.git
+```
+### Prerequisites
+
+- Node.js and npm
+- Python, pip, python virtualenv
+- MySQL (or another preferred relational database)
