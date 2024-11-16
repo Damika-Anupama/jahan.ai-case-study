@@ -1,4 +1,5 @@
 from rest_framework import status
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import AccountSettings, NotificationSettings, ThemeSettings, PrivacySettings
@@ -11,6 +12,43 @@ from .serializers import (
 from .auth import authenticate, get_user_from_token
 from rest_framework_simplejwt.tokens import RefreshToken
 
+class RegisterView(APIView):
+    @transaction.atomic
+    def post(self, request):
+        data = request.data
+        serializer = AccountSettingsSerializer(data=data)
+        
+        if serializer.is_valid():
+            user = serializer.save()
+            
+            try:
+                NotificationSettings.objects.create(
+                    user=user,
+                    frequency='daily',
+                    email_notifications=True,
+                    push_notifications=True
+                )
+                ThemeSettings.objects.create(
+                    user=user,
+                    theme='light',
+                    font_size='medium'
+                )
+                PrivacySettings.objects.create(
+                    user=user,
+                    profile_visibility='public',
+                    data_sharing=True
+                )
+            except Exception as e:
+                transaction.set_rollback(True)
+                return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'token': str(refresh.access_token),
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 class LoginView(APIView):
     def post(self, request):
         email = request.data.get('email')
@@ -70,142 +108,3 @@ class UpdatePreferencesView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class AccountSettingsView(APIView):
-    def get(self, request):
-        try:
-            settings = AccountSettings.objects.get(user=request.user)
-            serializer = AccountSettingsSerializer(settings)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except AccountSettings.DoesNotExist:
-            return Response({"error": "Account settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        serializer = AccountSettingsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
-        try:
-            settings = AccountSettings.objects.get(user=request.user)
-            serializer = AccountSettingsSerializer(settings, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except AccountSettings.DoesNotExist:
-            return Response({"error": "Account settings not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    def delete(self, request):
-        try:
-            settings = AccountSettings.objects.get(user=request.user)
-            settings.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except AccountSettings.DoesNotExist:
-            return Response({"error": "Account settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-class NotificationSettingsView(APIView):
-    def get(self, request):
-        try:
-            settings = NotificationSettings.objects.get(user=request.user)
-            serializer = NotificationSettingsSerializer(settings)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except NotificationSettings.DoesNotExist:
-            return Response({"error": "Notification settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        serializer = NotificationSettingsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
-        try:
-            settings = NotificationSettings.objects.get(user=request.user)
-            serializer = NotificationSettingsSerializer(settings, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except NotificationSettings.DoesNotExist:
-            return Response({"error": "Notification settings not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    def delete(self, request):
-        try:
-            settings = NotificationSettings.objects.get(user=request.user)
-            settings.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except NotificationSettings.DoesNotExist:
-            return Response({"error": "Notification settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-class ThemeSettingsView(APIView):
-    def get(self, request):
-        try:
-            settings = ThemeSettings.objects.get(user=request.user)
-            serializer = ThemeSettingsSerializer(settings)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except ThemeSettings.DoesNotExist:
-            return Response({"error": "Theme settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        serializer = ThemeSettingsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
-        try:
-            settings = ThemeSettings.objects.get(user=request.user)
-            serializer = ThemeSettingsSerializer(settings, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except ThemeSettings.DoesNotExist:
-            return Response({"error": "Theme settings not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    def delete(self, request):
-        try:
-            settings = ThemeSettings.objects.get(user=request.user)
-            settings.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except ThemeSettings.DoesNotExist:
-            return Response({"error": "Theme settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-class PrivacySettingsView(APIView):
-    def get(self, request):
-        try:
-            settings = PrivacySettings.objects.get(user=request.user)
-            serializer = PrivacySettingsSerializer(settings)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except PrivacySettings.DoesNotExist:
-            return Response({"error": "Privacy settings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        serializer = PrivacySettingsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
-        try:
-            settings = PrivacySettings.objects.get(user=request.user)
-            serializer = PrivacySettingsSerializer(settings, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except PrivacySettings.DoesNotExist:
-            return Response({"error": "Privacy settings not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    def delete(self, request):
-        try:
-            settings = PrivacySettings.objects.get(user=request.user)
-            settings.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except PrivacySettings.DoesNotExist:
-            return Response({"error": "Privacy settings not found"}, status=status.HTTP_404_NOT_FOUND)

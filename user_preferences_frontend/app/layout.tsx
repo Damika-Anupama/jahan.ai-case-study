@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Preferences App",
+  title: "Backend Case study",
   description: "Manage user preferences easily",
 };
 

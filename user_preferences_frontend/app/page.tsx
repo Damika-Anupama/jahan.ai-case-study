@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,13 +54,26 @@ export default function LoginPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Password</label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-blue-300"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 px-3 flex items-center focus:outline-none"
+            >
+              {showPassword ? (
+                <AiFillEyeInvisible className="h-5 w-5 text-gray-500" />
+              ) : (
+                <AiFillEye className="h-5 w-5 text-gray-500" />
+              )}
+            </button>
+          </div>
         </div>
         <button
           type="submit"
@@ -66,6 +81,9 @@ export default function LoginPage() {
         >
           Login
         </button>
+        <p className="text-center text-sm text-gray-600">
+          Don't have an account? <a href="/register" className="text-blue-500 hover:underline">Register</a>
+        </p>
       </form>
     </div>
   );
